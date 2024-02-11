@@ -45,16 +45,41 @@ Feel free to use this package in your application, it's always ready to work wit
 - Not all OpenAI APIs sections are included in our package. Soon, all of them will be added
 - Comprehensive examples/snippets provided for nearly all implemented features within the package, located in the `/example` folder.
 
-## 👑 Code Progress (100 %)
+## 👑 Code Progress (58 %)
 
 - [x] [Authentication](#authentication)
-- [ ] [Models](#models)
-- [ ] [Completions](#completions)
 - [x] [Chat (GPT)](#chat)
 - [x] [Edits](#edits)
 - [x] [Images](#images)
 - [x] [Embeddings](#embeddings)
 - [x] [Audio](#audio)
+- [x] [Speech](#speech)
+- [ ] [Models](#models)
+- [ ] [Completions](#completions)
+- [ ] [Moderation](#moderations)
 - [ ] [Files](#files)
 - [ ] [Fine-tunes](#fine-tunes)
+
+
+## 💫 Testing Progress (40 %)
+
+- [x] [Authentication](#authentication)
+- [x] [Chat (GPT)](#chat)
+- [x] [Images](#images)
+- [x] [Audio](#audio)
+- [x] [Speech](#speech)
+- [ ] [Models](#models)
+- [ ] [Completions](#completions)
 - [ ] [Moderation](#moderations)
+- [ ] [Files](#files)
+- [ ] [Fine-tunes](#fine-tunes)
+- [ ] [Edits](#edits)
+- [ ] [Embeddings](#embeddings)
+
+</br>
+
+# 📜 Full Documentation:
+
+For the full documentation on library [check here](https://pub.dev/documentation/openai_pacakge/latest/).
+
+</br>
