@@ -211,3 +211,233 @@ void main() {
 print(response)
 ```
 
+
+## 🚀 OpenAI Embeddings
+
+The `embeddings` method allows you to generate text embeddings using the OpenAI Embeddings API. Text embeddings are numerical representations of text data that capture the semantic meaning of the text.
+
+### Parameters
+
+- `input` (required): The input text for which you want to generate embeddings.
+- `encodingFormat`: The encoding format of the input text. Defaults to 'float'.
+- `dimensions`: The dimensions of the input text.
+- `user`: The user ID associated with the request.
+- `maxTokens`: The maximum number of tokens to generate in the response. Defaults to 100.
+- `temperature`: Controls the randomness of the response. Higher values lead to more diverse embeddings. Defaults to 0.3.
+- `topP`: Controls the diversity of the response by sampling from the topP tokens. Defaults to 1.0.
+- `n`: Specifies the number of embeddings to generate. Defaults to 1.
+
+### Usage
+
+```dart
+import 'package:openai_package/openai_package.dart';
+
+void main() async {
+  // Initialize OpenAI instance
+  OpenAI openAi = OpenAI(apiKey: 'your_api_key', model: 'text-embedding-3-small');
+
+  // Generate embeddings
+  String embeddings = await openAi.embeddings(
+    input: 'Text input for generating embeddings',
+    encodingFormat: 'float',
+    dimensions: 512,
+    user: 'user_id',
+    maxTokens: 100,
+    temperature: 0.3,
+    topP: 1.0,
+    n: 1,
+  );
+  print(embeddings);
+}
+```
+
+### Response
+
+The response from the embeddings method is a string representing the `embeddings` generated for the input text.
+```json
+{
+  "embeddings": [
+    0.123,
+    0.456,
+    ...
+  ]
+}
+```
+
+### Notes
+
+    Make sure to provide your API key when initializing the `OpenAI` instance.
+    If the `apiKey` is not provided or is invalid, you will receive an error message as the output.
+    Ensure that the specified model is supported by the Embeddings application, otherwise, an error will be thrown.
+
+
+## 🖼️ OpenAI Image Generation
+
+The `generateImage` method allows you to generate images using the OpenAI Image API. You can generate images based on prompts, edit existing images, and create variations of images.
+
+### Parameters
+
+- `prompt` (required): The prompt for generating or editing the image.
+- `n` (required): The number of images to generate.
+- `size` (required): The size of the image to generate.
+- `edit`: Specifies whether to perform image editing. Defaults to `false`.
+- `image`: The path to the image file when editing an image.
+- `mask`: The path to the mask file when editing an image.
+- `variations`: Specifies whether to generate variations of an image. Defaults to `false`.
+- `response_format`: The desired format of the response. Defaults to "url".
+- `style`: The style of the generated image. Defaults to "vivid".
+
+### Usage
+
+```dart
+import 'package:openai_package/openai_package.dart';
+
+void main() async {
+  // Initialize OpenAI instance
+  OpenAI openAi = OpenAI(apiKey: 'your_api_key', model: 'dall-e-3');
+
+  // Generate image
+  String generatedImage = await openAi.generateImage(
+    prompt: 'Generate an image of a cat playing with a ball.',
+    n: 1,
+    size: '256x256',
+    edit: false,
+    variations: false,
+    response_format: 'url',
+    style: 'vivid',
+  );
+  print(generatedImage);
+}
+```
+### Response
+
+The response from the `generateImage` method is a string representing the generated image URL or the image data, depending on the response format specified.
+```json
+{
+  "image_url": "https://generated_image_url.com/image.jpg"
+}
+```
+
+### Notes
+    Ensure to provide your API key when initializing the `OpenAI` instance.
+    If the `apiKey` is not provided or is invalid, you will receive an error message as the output.
+    The `edit` and `variations` parameters control the type of image generation operation to perform.
+    The `image and mask` parameters are required when performing image editing.
+
+## 🎙️ OpenAI Audio Transcription
+
+The `transcriptions` method allows you to transcribe audio files using the OpenAI Audio API. You can transcribe audio files of various formats and languages.
+
+### Parameters
+
+- `audioUrl` (required): The URL of the audio file to be transcribed.
+- `response_format`: The format of the response. Defaults to "text".
+- `language`: The language of the audio file, if applicable.
+- `prompt`: An optional prompt for the transcription.
+- `temperature`: Controls the randomness of the generated text. Defaults to 0.3.
+- `topP`: The cumulative probability for selecting the next token. Defaults to 1.0.
+- `n`: The number of completions to generate. Defaults to 1.
+
+### Usage
+
+```dart
+import 'package:openai_package/openai_package.dart';
+
+void main() async {
+  // Initialize OpenAI instance
+  OpenAI openAi = OpenAI(apiKey: 'your_api_key', model: 'whisper-1' );
+
+  // Transcribe audio
+  String transcription = await openAi.transcriptions(
+    audioUrl: 'https://example.com/audio.mp3',
+    response_format: 'text',
+    language: 'en',
+    prompt: 'Transcribe the following audio clip:',
+    temperature: 0.3,
+    topP: 1.0,
+    n: 1,
+  );
+  print(transcription);
+}
+```
+### Response
+
+The response from the `transcriptions` method is a string representing the transcribed text.
+
+```json
+{
+  "transcription": "The transcribed text will be here."
+}
+```
+
+### Notes
+    Ensure to provide your API key when initializing the `OpenAI` instance.
+    If the `apiKey` is not provided or is invalid, you will receive an error message as the output.
+    The `audioUrl` parameter should be a direct URL to the audio file.
+    Supported audio file formats include MP3, MP4, MPEG, MPG, M4A, WAV, and WebM.
+    The `language` parameter is optional and can be used to specify the language of the audio file.
+    The `prompt` parameter is optional and can be used to provide additional context for the transcription.
+
+## 🎤 OpenAI Text-to-Speech (TTS)
+
+The `speech` method allows you to convert text to speech using the OpenAI Text-to-Speech (TTS) API. You can customize various parameters such as the voice, speed, and output format.
+
+### Parameters
+
+- `input` (required): The text to be converted to speech.
+- `voice`: The voice to use for the speech. Defaults to 'alloy'.
+- `response_format`: The format of the speech output. Defaults to 'mp3'.
+- `output`: The name of the output file where the speech will be saved. Defaults to 'speech.mp3'.
+- `speed`: The speed of speech generation. Defaults to 1.0.
+
+### Supported Models and Voices
+
+The supported models and voices for the TTS application are as follows:
+
+- Models: "tts-1", "tts-1-hd"
+- Voices: "alloy", "echo", "fable", "onyx", "nova", "shimmer"
+
+### Usage
+
+```dart
+import 'package:openai_package/openai_package.dart';
+
+void main() async {
+  // Initialize OpenAI instance
+  OpenAI openAi = OpenAI(apiKey: 'your_api_key', models: 'tts-1');
+
+  // Convert text to speech
+  String result = await openAi.speech(
+    input: 'Hello, how are you?',
+    voice: 'alloy',
+    response_format: 'mp3',
+    output: 'speech.mp3',
+    speed: 1.0,
+  );
+  print(result); // File downloaded to speech.mp3
+}
+```
+
+### Response
+
+The response from the `speech` method is a success message indicating that the file has been downloaded.
+
+### Notes
+
+    Ensure to provide your API key when initializing the `OpenAI` instance.
+    If the `apiKey` is not provided or is invalid, you will receive an error message as the output.
+    Supported response formats for speech application include "mp3", "opus", "aac", and "flac".
+    The `output` parameter specifies the name of the file where the speech will be saved.
+
+## Want to Contribute?
+
+Your help is invaluable in improving this project for the benefit of the community. Here's how you can contribute:
+
+- **Documentation:** Take a moment to document any undocumented classes, properties, or methods. Your insights can help other developers understand the project better.
+- **Code Refactoring:** While code refactoring is primarily the responsibility of the project maintainer, your suggestions for improvements are always welcome.
+- **Code Review:** If you spot opportunities for optimizing code or implementing better solutions, please share your insights.
+- **Sample Use Cases:** If you've tried any use cases or examples and want to share them, feel free to contribute them to the `examples/` directory.
+- **Stay Updated:** Keep an eye out for any updates in the API, Dart, relevant packages, or Flutter that could enhance this project.
+- **Donations:** Consider supporting the project with a donation. Your contributions help sustain and improve the project over time.
+
+Your contributions, no matter how small, make a difference in making this project better for everyone. Thank you for your support!
