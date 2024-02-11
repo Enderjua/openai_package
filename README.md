@@ -83,3 +83,25 @@ Feel free to use this package in your application, it's always ready to work wit
 For the full documentation on library [check here](https://pub.dev/documentation/openai_pacakge/latest/).
 
 </br>
+
+# 🟢 Usage
+
+## Authentication
+
+### API key
+
+The OpenAI API utilizes API keys for authentication. You can obtain your account's API key by visiting the[API keys](https://platform.openai.com/account/api-keys) section of your account.
+
+```dart
+import 'package:openai_package/openai_package.dart';
+
+// lib/main.dart
+void main() {
+  OpenAI openAi = OpenAI(apiKey: 'your_api_key', model: 'select_your_model');
+  // ..
+}
+```
+
+If there is no `apiKey` data provided, you will be prompted with a warning message to enter your `apiKey` data.
+
+If you have an `apiKey` but it has expired or is invalid, you will receive an error message as the output from the OpenAI APIs
