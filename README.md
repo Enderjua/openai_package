@@ -429,6 +429,87 @@ The response from the `speech` method is a success message indicating that the f
     Supported response formats for speech application include "mp3", "opus", "aac", and "flac".
     The `output` parameter specifies the name of the file where the speech will be saved.
 
+
+# OpenAI Formatted Responses
+
+This document provides a summary of classes representing formatted responses from OpenAI API calls.
+
+## `FormatImage`
+
+A class that represents a formatted image.
+
+### Constructor
+
+- `FormatImage({String result})`: Constructs a `FormatImage` object with the given `result`.
+
+### Methods
+
+- `getImageUrl({String model})`: Returns the URL of the image based on the specified `model`.
+- `getPrompt({String model})`: Returns the prompt of the image based on the specified `model`.
+
+## `FormatTranscriptions`
+
+A class that provides methods for formatting transcriptions.
+
+### Constructor
+
+- `FormatTranscriptions({Map<String, dynamic> result})`: Constructs a `FormatTranscriptions` object with the given `result`.
+
+### Methods
+
+- `generateRandomString(int length)`: Generates a random string of the specified length.
+- `writeJsonToFile(Map<String, dynamic> jsonData)`: Writes the given JSON data to a file and returns the file name.
+
+## `Message`
+
+Represents a message in a conversation.
+
+### Constructor
+
+- `Message({String role, String content})`: Constructs a new `Message` with the given `role` and `content`.
+
+### Methods
+
+- `toJson()`: Converts the `Message` object to a JSON representation.
+
+## `FormatMessage`
+
+A class that represents a formatted message.
+
+### Constructor
+
+- `FormatMessage({String result})`: Constructs a `FormatMessage` object with the given `result`.
+
+### Methods
+
+- `getId()`: Returns the 'id' value from the JSON response.
+- `getObject()`: Returns the 'object' value from the JSON response.
+- `getCreated()`: Returns the 'created' value from the JSON response.
+- `getModel()`: Returns the 'model' value from the JSON response.
+- `getChoices(String result)`: Returns the 'choices' value from the JSON response.
+- `getMessage()`: Returns the 'content' value of the first choice's 'message' from the JSON response.
+- `getUsage()`: Returns the 'usage' value from the JSON response.
+- `getSystemFingerprint()`: Returns the 'system_fingerprint' value from the JSON response.
+
+## `FormatEmbeddings`
+
+A class that represents the formatted embeddings response.
+
+### Constructor
+
+- `FormatEmbeddings({String result})`: Constructs a `FormatEmbeddings` instance with the given `result`.
+
+### Methods
+
+- `getIndex()`: Returns the index value from the JSON response.
+- `getObject()`: Returns the object value from the JSON response.
+- `getEmbedding()`: Returns the embedding value from the JSON response.
+- `getModel()`: Returns the model value from the JSON response.
+- `getPromptTokens()`: Returns the number of prompt tokens from the JSON response.
+- `getTotalTokens()`: Returns the total number of tokens from the JSON response.
+
+
+
 ## Want to Contribute?
 
 Your help is invaluable in improving this project for the benefit of the community. Here's how you can contribute:
