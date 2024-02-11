@@ -1,4 +1,4 @@
-# ChatGPT , Whisper, Embeddings and DALL-E APIs are [added](#chat-chatgpt) to the can uses.
+# ChatGPT , Whisper, Embeddings and DALL-E APIs are [added](#chat) to the can uses.
 
 </br>
 <p align="center">
@@ -45,3 +45,16 @@ Feel free to use this package in your application, it's always ready to work wit
 - Not all OpenAI APIs sections are included in our package. Soon, all of them will be added
 - Comprehensive examples/snippets provided for nearly all implemented features within the package, located in the `/example` folder.
 
+## 👑 Code Progress (100 %)
+
+- [x] [Authentication](#authentication)
+- [ ] [Models](#models)
+- [ ] [Completions](#completions)
+- [x] [Chat (GPT)](#chat)
+- [x] [Edits](#edits)
+- [x] [Images](#images)
+- [x] [Embeddings](#embeddings)
+- [x] [Audio](#audio)
+- [ ] [Files](#files)
+- [ ] [Fine-tunes](#fine-tunes)
+- [ ] [Moderation](#moderations)
