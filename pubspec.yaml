@@ -1,6 +1,6 @@
 name: openai_package
 description: Dart SDK for openAI Apis (Chat & Image & Transcription & Voice and Embeddings), integrate OpenAI products into your Flutter application.
-version: 1.0.6
+version: 1.0.7
 homepage: https://github.com/Enderjua/openai_package
 repository: https://github.com/Enderjua/openai_package
 documentation: https://github.com/Enderjua/openai_package/blob/main/README.md

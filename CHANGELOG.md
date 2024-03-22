@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.0.7
+
+- Added `OpenAIGenerateImage` class for calls GPT responses.
+- Removed `FormatImage` class used in.
+- Fixed an issue where certain API requests could fail due to an overly aggressive default timeout.
+
 ## 1.0.6
 
 - Added `OpenAIEmbeddings` class for calls GPT responses.
-- Added `MessageData` class for calls GPT responses.
+- Added `OpenAIChatMessage` class for calls GPT responses.
 - Removed `FormatMessage` class used in.
 - Removed `FormatEmbeddings` class used in.
 - Fixed an issue where certain API requests could fail due to an overly aggressive default timeout.

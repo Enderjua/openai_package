@@ -355,7 +355,7 @@ class OpenAI {
   /// The [response_format] specifies the format of the generated output.
   /// The [style] determines the style of the generated text.
 
-  Future<String> generateImage({
+  Future<OpenAIGenerateImage> generateImage({
     required String prompt,
     required int n,
     required String size,
@@ -427,7 +427,8 @@ class OpenAI {
       );
 
       if (response.statusCode == 200) {
-        return response.body;
+        Future<OpenAIGenerateImage> genereateImage = OpenAIGenerateImage.fetchData(response.body);
+        return genereateImage;
       } else {
         throw Exception('Failed to generate image: ${response.statusCode}');
       }
@@ -452,10 +453,14 @@ class OpenAI {
         ..fields['response_format'] = response_format
         ..fields['n'] = n.toString()
         ..fields['size'] = size;
+        if (organization.isNotEmpty) { 
+  request.headers['organization'] = organization; 
+}
 
       final response = await http.Response.fromStream(await request.send());
       if (response.statusCode == 200) {
-        return response.body;
+        Future<OpenAIGenerateImage> genereateImage = OpenAIGenerateImage.fetchData(response.body);
+        return genereateImage;
       } else {
         throw Exception('Failed to generate image: ${response.statusCode}');
       }
@@ -481,9 +486,14 @@ class OpenAI {
         ..fields['n'] = n.toString()
         ..fields['size'] = size;
 
+       if (organization.isNotEmpty) { 
+  request.headers['organization'] = organization; 
+}
+
       final response = await http.Response.fromStream(await request.send());
       if (response.statusCode == 200) {
-        return response.body;
+        Future<OpenAIGenerateImage> genereateImage = OpenAIGenerateImage.fetchData(response.body);
+        return genereateImage;
       } else {
         throw Exception('Failed to generate image: ${response.statusCode}');
       }

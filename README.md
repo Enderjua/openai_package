@@ -331,7 +331,7 @@ void main() async {
     OpenAI.model = 'your-model';
 
   // Generate image
-  String generatedImage = await openAi.generateImage(
+  OpenAIGenerateImage generatedImage = await openAi.generateImage(
     prompt: 'Generate an image of a cat playing with a ball.',
     n: 1,
     size: '256x256',
@@ -341,6 +341,8 @@ void main() async {
     style: 'vivid',
   );
   print(generatedImage);
+  // or
+  print(generatedImage.url);
 }
 ```
 ### Response
@@ -348,7 +350,7 @@ void main() async {
 The response from the `generateImage` method is a string representing the generated image URL or the image data, depending on the response format specified.
 ```json
 {
-  "image_url": "https://generated_image_url.com/image.jpg"
+  "url": "https://generated_image_url.com/image.jpg"
 }
 ```
 
@@ -470,19 +472,6 @@ The response from the `speech` method is a success message indicating that the f
 
 This document provides a summary of classes representing formatted responses from OpenAI API calls.
 
-## `FormatImage`
-
-A class that represents a formatted image.
-
-### Constructor
-
-- `FormatImage({String result})`: Constructs a `FormatImage` object with the given `result`.
-
-### Methods
-
-- `getImageUrl({String model})`: Returns the URL of the image based on the specified `model`.
-- `getPrompt({String model})`: Returns the prompt of the image based on the specified `model`.
-
 ## `FormatTranscriptions`
 
 A class that provides methods for formatting transcriptions.
@@ -496,17 +485,6 @@ A class that provides methods for formatting transcriptions.
 - `generateRandomString(int length)`: Generates a random string of the specified length.
 - `writeJsonToFile(Map<String, dynamic> jsonData)`: Writes the given JSON data to a file and returns the file name.
 
-## `MessageData`
-
-Represents a message in a conversation.
-
-### Constructor
-
-- `MessageDAta({String role, String content})`: Constructs a new `MessageData` with the given `role` and `content`.
-
-### Methods
-
-- `toJson()`: Converts the `MessageData` object to a JSON representation.
 
 ## Want to Contribute?
 

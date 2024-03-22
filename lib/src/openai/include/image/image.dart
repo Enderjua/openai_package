@@ -17,6 +17,15 @@ class FormatImage {
   /// a warning message.
   ///
   /// Throws an [ArgumentError] if the [model] is unsupported.
+  /// 
+  Map<String, dynamic> decodeResult() {
+    return jsonDecode(result);
+  }
+
+  OpenAIGenerateImage extractData() {
+    final response = decodeResult();
+    return OpenAIGenerateImage(created: response['created'] ??  "WARNING: Invalid 'created' JSON address", revised_prompt: response['data'][0]['revised_prompt'] ??  "WARNING: Invalid 'prompt' JSON address", url: response['data'][0]['url'] ??  "WARNING: Invalid 'url' JSON address",);
+  }
   String getImageUrl({String? model}) {
     if (model == 'dall-e-3' || model == 'dall-e-2') {
       final jsonResponse = jsonDecode(result);
@@ -43,4 +52,32 @@ class FormatImage {
       throw ArgumentError('Unsupported model: $model');
     }
   }
+}
+
+
+class OpenAIGenerateImage {
+  final dynamic created;
+  final dynamic revised_prompt;
+  final dynamic url;
+
+  OpenAIGenerateImage({
+    required this.created,
+    required this.revised_prompt,
+    required this.url,
+  });
+
+  @override
+  String toString() {
+    return """ 
+    Created: $created,
+    Revised_prompt: $revised_prompt,
+    URL: $url
+    """;
+  }
+
+  static Future<OpenAIGenerateImage> fetchData(String result) async {
+    return FormatImage(result: result).extractData();
+  }
+
+
 }

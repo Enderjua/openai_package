@@ -1,7 +1,7 @@
 // ignore_for_file: file_names
 
 import '../../import/import.dart';
-
+ 
 
 /// A class that represents a formatted message.
 class FormatMessage {
