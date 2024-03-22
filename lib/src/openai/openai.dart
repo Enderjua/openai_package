@@ -1,22 +1,21 @@
 import 'import/import.dart';
+import 'import/importAi.dart';
 import 'package:http/http.dart' as http;
 
-
 class OpenAI {
-  final String apiKey;
-  final String model;
+  static String apiKey = '';
+  static String model = '';
+  static String organization = '';
+  static int connectionTimeout = 30;
+
   String apiUrl = "https://api.openai.com/v1/chat/completions";
 
   /// Creates a new instance of the OpenAI class.
   ///
   /// The [apiKey] parameter is the API key used for authentication.
   /// The [model] parameter specifies the model to be used for the OpenAI API.
-  OpenAI({
-    required this.apiKey,
-    required this.model,
-  }) {
-
-    
+  /// The [organization] parameter is an optional parameter that specifies the organization associated with the API key.
+  OpenAI() {
     /// Validates the 'model' parameter and prints a warning message if it is invalid.
     /// Accepted values for the 'model' parameter are:
     /// - 'gpt-4-0125-preview'
@@ -59,7 +58,10 @@ class OpenAI {
     }
   }
 
-  set fileWriteAsBytes(Future<Null> Function(String path, List<int> bytes, {bool flush, FileMode mode}) fileWriteAsBytes) {}
+  set fileWriteAsBytes(
+      Future<Null> Function(String path, List<int> bytes,
+              {bool flush, FileMode mode})
+          fileWriteAsBytes) {}
 
   /// Checks if the given [model] is a valid model.
   ///
@@ -97,20 +99,17 @@ class OpenAI {
     return validModels.contains(model);
   }
 
-
-
   /// Represents a request to convert text to speech using OpenAI.
-      /// 
-      /// The [input] parameter is the text to be converted to speech.
-      /// The [voice] parameter specifies the voice to be used for the speech. The default value is 'alloy'.
-      /// The [response_format] parameter specifies the format of the speech response. The default value is 'mp3'.
-      /// The [output] parameter specifies the file name for the speech output. The default value is 'speech.mp3'.
-      /// The [speed] parameter specifies the speed of the speech. The default value is 1.0.
-      /// 
-      /// Returns a Future that completes with the speech output.
+  ///
+  /// The [input] parameter is the text to be converted to speech.
+  /// The [voice] parameter specifies the voice to be used for the speech. The default value is 'alloy'.
+  /// The [response_format] parameter specifies the format of the speech response. The default value is 'mp3'.
+  /// The [output] parameter specifies the file name for the speech output. The default value is 'speech.mp3'.
+  /// The [speed] parameter specifies the speed of the speech. The default value is 1.0.
+  ///
+  /// Returns a Future that completes with the speech output.
 
   Future<String> speech(
-
       {required String input,
       String voice = 'alloy',
       String response_format = 'mp3',
@@ -146,9 +145,9 @@ class OpenAI {
 
     /// Validates if the given [voice] is supported by the speech application.
     /// Throws an [ArgumentError] if the [voice] is not supported.
-    /// 
+    ///
     /// [voiceValues] is a list of supported voice values.
-    /// 
+    ///
     /// Example usage:
     /// ```dart
     /// List<String> voiceValues = [
@@ -159,9 +158,9 @@ class OpenAI {
     ///   'nova',
     ///   'shimmer'
     /// ];
-    /// 
+    ///
     /// String voice = 'echo';
-    /// 
+    ///
     /// if (!voiceValues.contains(voice)) {
     ///   throw ArgumentError('Speech application does not accept voice $voice');
     /// }
@@ -197,69 +196,69 @@ class OpenAI {
           'Speech application does not accept response format $response_format');
     }
 
-  /// Sends a request to the OpenAI API to convert text to speech.
-  ///
-  /// The [url] variable stores the endpoint URL for the speech API.
-  /// The [headers] variable contains the necessary authorization and content-type headers.
-  /// The [body] variable is a JSON-encoded object that includes the model, input, voice, speed, and response format.
-  ///
-  /// Example usage:
-  /// ```dart
-  /// var url = 'https://api.openai.com/v1/audio/speech';
-  /// var headers = {
-  ///   'Authorization': 'Bearer $apiKey',
-  ///   'Content-Type': 'application/json',
-  /// };
-  /// var body = jsonEncode({
-  ///   "model": model,
-  ///   "input": input,
-  ///   "voice": voice,
-  ///   "speed": speed,
-  ///   "response_format": response_format,
-  /// });
-  /// ```
-  var url = 'https://api.openai.com/v1/audio/speech';
-  var headers = {
-  'Authorization': 'Bearer $apiKey',
-  'Content-Type': 'application/json',
-};
-  var body = jsonEncode({
-     "model": model,
+    /// Sends a request to the OpenAI API to convert text to speech.
+    ///
+    /// The [url] variable stores the endpoint URL for the speech API.
+    /// The [headers] variable contains the necessary authorization and content-type headers.
+    /// The [body] variable is a JSON-encoded object that includes the model, input, voice, speed, and response format.
+    ///
+    /// Example usage:
+    /// ```dart
+    /// var url = 'https://api.openai.com/v1/audio/speech';
+    /// var headers = {
+    ///   'Authorization': 'Bearer $apiKey',
+    ///   'Content-Type': 'application/json',
+    /// };
+    /// var body = jsonEncode({
+    ///   "model": model,
+    ///   "input": input,
+    ///   "voice": voice,
+    ///   "speed": speed,
+    ///   "response_format": response_format,
+    /// });
+    /// ```
+    var url = 'https://api.openai.com/v1/audio/speech';
+    var headers = {
+      'Authorization': 'Bearer $apiKey',
+      'Content-Type': 'application/json',
+    };
+    if (organization != '') {
+      headers['OpenAI-Organization'] = organization;
+    }
+    var body = jsonEncode({
+      "model": model,
       "input": input,
       "voice": voice,
       "speed": speed,
       "response_format": response_format,
-  });
+    });
 
+    /// Sends a POST request to the specified [url] with the given [headers] and [body].
+    /// If the server returns a 200 OK response, the response body is written to a file specified by [output].
+    /// Returns a success message if the file is downloaded successfully.
+    /// Throws an exception if the server returns an unexpected response.
+    var response =
+        await http.post(Uri.parse(url), headers: headers, body: body);
 
-
-  /// Sends a POST request to the specified [url] with the given [headers] and [body].
-  /// If the server returns a 200 OK response, the response body is written to a file specified by [output].
-  /// Returns a success message if the file is downloaded successfully.
-  /// Throws an exception if the server returns an unexpected response.
-  var response = await http.post(Uri.parse(url), headers: headers, body: body);
-
-  if (response.statusCode == 200) {
-    // If the server returns a 200 OK response, then write the body to a file.
-    await File(output).writeAsBytes(response.bodyBytes);
-    return 'File downloaded to speech.mp3';
-  } else {
-    // If the server returns an unexpected response, then throw an exception.
-    throw Exception('Failed to download file: ${response.statusCode}');
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, then write the body to a file.
+      await File(output).writeAsBytes(response.bodyBytes);
+      return 'File downloaded to speech.mp3';
+    } else {
+      // If the server returns an unexpected response, then throw an exception.
+      throw Exception('Failed to download file: ${response.statusCode}');
+    }
   }
-  }
 
-
-
-      /// Represents the parameters for generating text from audio using OpenAI.
-    ///
-    /// The [audioUrl] is the required URL of the audio file.
-    /// The [response_format] specifies the format of the response (default is "text").
-    /// The [language] specifies the language of the audio file.
-    /// The [prompt] is an optional prompt to provide context for the generated text.
-    /// The [temperature] controls the randomness of the generated text (default is 0.3).
-    /// The [topP] controls the diversity of the generated text (default is 1.0).
-    /// The [n] specifies the number of text completions to generate (default is 1).
+  /// Represents the parameters for generating text from audio using OpenAI.
+  ///
+  /// The [audioUrl] is the required URL of the audio file.
+  /// The [response_format] specifies the format of the response (default is "text").
+  /// The [language] specifies the language of the audio file.
+  /// The [prompt] is an optional prompt to provide context for the generated text.
+  /// The [temperature] controls the randomness of the generated text (default is 0.3).
+  /// The [topP] controls the diversity of the generated text (default is 1.0).
+  /// The [n] specifies the number of text completions to generate (default is 1).
 
   Future<String> transcriptions({
     required String audioUrl,
@@ -304,12 +303,17 @@ class OpenAI {
         /// The [prompt] is an optional parameter to provide a prompt for the transcription.
         ///
         /// Returns the transcription result as a string.
-          var request = http.MultipartRequest('POST',
+        var request = http.MultipartRequest('POST',
             Uri.parse('https://api.openai.com/v1/audio/transcriptions'));
 
         request.headers.addAll({
           'Authorization': 'Bearer $apiKey',
         });
+        if (organization != '') {
+          request.headers.addAll({
+            'OpenAI-Organization': organization,
+          });
+        }
 
         request.files.add(await http.MultipartFile.fromPath(
           'file',
@@ -339,19 +343,17 @@ class OpenAI {
     }
   }
 
-
-    /// Represents the parameters for generating text using OpenAI.
-    ///
-    /// The [prompt] is the input text used to generate the output.
-    /// The [n] specifies the number of completions to generate.
-    /// The [size] determines the maximum length of the generated text.
-    /// The [edit] flag indicates whether the prompt should be editable.
-    /// The [image] is an optional image prompt.
-    /// The [mask] is an optional mask for the prompt.
-    /// The [variations] flag indicates whether to generate multiple variations of the completion.
-    /// The [response_format] specifies the format of the generated output.
-    /// The [style] determines the style of the generated text.
-
+  /// Represents the parameters for generating text using OpenAI.
+  ///
+  /// The [prompt] is the input text used to generate the output.
+  /// The [n] specifies the number of completions to generate.
+  /// The [size] determines the maximum length of the generated text.
+  /// The [edit] flag indicates whether the prompt should be editable.
+  /// The [image] is an optional image prompt.
+  /// The [mask] is an optional mask for the prompt.
+  /// The [variations] flag indicates whether to generate multiple variations of the completion.
+  /// The [response_format] specifies the format of the generated output.
+  /// The [style] determines the style of the generated text.
 
   Future<String> generateImage({
     required String prompt,
@@ -364,14 +366,13 @@ class OpenAI {
     String response_format = "url",
     String style = "vivid",
   }) async {
-
     /// Sets the API URL based on the provided parameters.
     ///
     /// If [edit] is true, sets the API URL for image editing using the [model] "dall-e-2".
     /// If [variations] is true, sets the API URL for image variations using the [model] "dall-e-2".
     /// If neither [edit] nor [variations] is true, sets the API URL for image generation using the [model] "dall-e-3" or "dall-e-2".
     /// Throws an [ArgumentError] if the [model] is invalid for the corresponding operation.
-     if (edit) {
+    if (edit) {
       if (model != "dall-e-2") {
         throw ArgumentError('Invalid model for editing: $model');
       }
@@ -388,7 +389,6 @@ class OpenAI {
       apiUrl = "https://api.openai.com/v1/images/generations";
     }
 
-
     /// Creates the headers and body for the OpenAI API request.
     ///
     /// The headers include the content type and authorization token.
@@ -397,6 +397,10 @@ class OpenAI {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $apiKey',
     };
+
+    if (organization != '') {
+      headers['OpenAI-Organization'] = organization;
+    }
 
     Map<String, dynamic> body = {
       "model": model,
@@ -409,11 +413,11 @@ class OpenAI {
 
     if (edit == false && variations == false) {
       /// Sends a POST request to the specified API endpoint with the given headers and body.
-      /// 
+      ///
       /// The [apiUrl] parameter represents the URL of the API endpoint.
       /// The [headers] parameter contains the headers to be included in the request.
       /// The [body] parameter is the JSON-encoded request body.
-      /// 
+      ///
       /// Returns the response body if the request is successful (status code 200).
       /// Otherwise, throws an exception with the corresponding status code.
       var response = await http.post(
@@ -491,26 +495,22 @@ class OpenAI {
     }
   }
 
+  /// Represents the parameters for generating text using the OpenAI API.
+  ///
+  /// The [input] parameter is the prompt or starting text for text generation.
+  /// The [encodingFormat] parameter specifies the format of the input text, with the default value being 'float'.
+  /// The [dimensions] parameter specifies the number of dimensions for the generated text.
+  /// The [user] parameter is an optional identifier for the user.
+  /// The [maxTokens] parameter specifies the maximum number of tokens to generate.
+  /// The [temperature] parameter controls the randomness of the generated text, with lower values producing more focused output.
+  /// The [topP] parameter controls the diversity of the generated text, with lower values producing more focused output.
+  /// The [n] parameter specifies the number of text completions to generate.
 
-
-
-      /// Represents the parameters for generating text using the OpenAI API.
-    ///
-    /// The [input] parameter is the prompt or starting text for text generation.
-    /// The [encodingFormat] parameter specifies the format of the input text, with the default value being 'float'.
-    /// The [dimensions] parameter specifies the number of dimensions for the generated text.
-    /// The [user] parameter is an optional identifier for the user.
-    /// The [maxTokens] parameter specifies the maximum number of tokens to generate.
-    /// The [temperature] parameter controls the randomness of the generated text, with lower values producing more focused output.
-    /// The [topP] parameter controls the diversity of the generated text, with lower values producing more focused output.
-    /// The [n] parameter specifies the number of text completions to generate.
-
-  Future<String> embeddings({
+  Future<OpenAIEmbeddings> embeddings({
     required String input,
     String encodingFormat = 'float',
     int? dimensions,
     String? user,
-    int maxTokens = 100,
     double temperature = 0.3,
     double topP = 1.0,
     int n = 1,
@@ -571,11 +571,10 @@ class OpenAI {
     /// The [user] parameter specifies the user ID.
     ///
     /// Returns a map representing the request body.
-   // Parametreleri oluştur
+    // Parametreleri oluştur
     Map<String, dynamic> requestBody = {
       "model": model,
       "input": input,
-      "max_tokens": maxTokens,
       "temperature": temperature,
       "top_p": topP,
       "n": n,
@@ -590,7 +589,6 @@ class OpenAI {
       requestBody['user'] = user;
     }
 
-
     /// Sends a POST request to the specified API endpoint with the given request body.
     ///
     /// The [requestBody] is encoded as JSON and added to the request body.
@@ -598,47 +596,56 @@ class OpenAI {
     /// The [apiKey] is the authorization token used for authentication.
     ///
     /// Returns the response body as a string.
-final encodedBody = utf8.encode(jsonEncode(requestBody));
+    final encodedBody = utf8.encode(jsonEncode(requestBody));
 
-    final request = await HttpClient().postUrl(Uri.parse(apiUrl));
+    // Creates a new HttpClient object
+    var httpClient = HttpClient();
+
+    // Sets the connection timeout in seconds (defaults to 30 seconds)
+    httpClient.connectionTimeout = Duration(seconds: connectionTimeout);
+
+    final request = await httpClient.postUrl(Uri.parse(apiUrl));
     request.headers.set('Content-Type', 'application/json; charset=utf-8');
     request.headers.set('Authorization', 'Bearer $apiKey');
+    if (organization != '') {
+      request.headers.set('OpenAI-Organization', organization);
+    }
     request.add(encodedBody);
 
     final httpResponse = await request.close();
     String responseBody = await utf8.decodeStream(httpResponse);
 
-    return responseBody;
+    Future<OpenAIEmbeddings> formatEmbeddings =
+        OpenAIEmbeddings.fetchData(responseBody);
+
+    return formatEmbeddings;
   }
 
+  /// Represents the configuration options for the OpenAI API.
+  ///
+  /// [version] specifies the version of the OpenAI API to use.
+  /// [messages] is an optional list of messages to include in the conversation.
+  /// [prompt] is the prompt to generate a completion for.
+  /// [maxTokens] specifies the maximum number of tokens in the generated output.
+  /// [temperature] controls the randomness of the generated output.
+  /// [topP] is the cumulative probability for selecting the next token.
+  /// [n] specifies the number of completions to generate.
+  /// [frequencyPenalty] penalizes words that appear too frequently.
+  /// [logitBias] is a map of logit bias values for specific tokens.
+  /// [logprobs] indicates whether to include log probabilities in the response.
+  /// [topLogprobs] specifies the number of log probabilities to include in the response.
+  /// [presencePenalty] penalizes words that are missing from the input.
+  /// [responseFormat] specifies the format of the response.
+  /// [seed] is an optional seed value for random number generation.
+  /// [stop] specifies when to stop generating tokens.
+  /// [stream] indicates whether to stream the response.
+  /// [speed] controls the speed of the API response.
 
-
-
-      /// Represents the configuration options for the OpenAI API.
-    ///
-    /// [version] specifies the version of the OpenAI API to use.
-    /// [messages] is an optional list of messages to include in the conversation.
-    /// [prompt] is the prompt to generate a completion for.
-    /// [maxTokens] specifies the maximum number of tokens in the generated output.
-    /// [temperature] controls the randomness of the generated output.
-    /// [topP] is the cumulative probability for selecting the next token.
-    /// [n] specifies the number of completions to generate.
-    /// [frequencyPenalty] penalizes words that appear too frequently.
-    /// [logitBias] is a map of logit bias values for specific tokens.
-    /// [logprobs] indicates whether to include log probabilities in the response.
-    /// [topLogprobs] specifies the number of log probabilities to include in the response.
-    /// [presencePenalty] penalizes words that are missing from the input.
-    /// [responseFormat] specifies the format of the response.
-    /// [seed] is an optional seed value for random number generation.
-    /// [stop] specifies when to stop generating tokens.
-    /// [stream] indicates whether to stream the response.
-    /// [speed] controls the speed of the API response.
-
-  Future<String> chat({
+  Future<OpenAIChatMessage> chat({
     String version = 'new',
     List<Message>? messages,
     String? prompt,
-    int maxTokens = 100,
+    int? maxTokens,
     double temperature = 0.3,
     double topP = 1.0,
     int n = 1,
@@ -683,9 +690,9 @@ final encodedBody = utf8.encode(jsonEncode(requestBody));
 
     /// Validates if the given [model] is supported by the chat application.
     /// Throws an [ArgumentError] if the model is not supported.
-    /// 
+    ///
     /// [modelValues] is a list of supported model values.
-    /// 
+    ///
     /// Example usage:
     /// ```dart
     /// List<String> modelValues = [
@@ -694,9 +701,9 @@ final encodedBody = utf8.encode(jsonEncode(requestBody));
     ///   // ...
     ///   "ft:gpt-3.5-turbo:my-org:custom_suffix:id"
     /// ];
-    /// 
+    ///
     /// String model = "gpt-4-0125-preview";
-    /// 
+    ///
     /// if (!modelValues.contains(model)) {
     ///   throw ArgumentError('Chat application does not accept model $model');
     /// }
@@ -725,47 +732,46 @@ final encodedBody = utf8.encode(jsonEncode(requestBody));
       throw ArgumentError('Chat application does not accept model $model');
     }
 
-  /// Creates the request body with the specified parameters.
-  ///
-  /// The [model] parameter specifies the model to use.
-  /// The [messages] parameter is optional and is used when the version is 'new'.
-  /// The [prompt] parameter is optional and is used when the version is 'old'.
-  /// The [maxTokens] parameter specifies the maximum number of tokens to generate.
-  /// The [temperature] parameter controls the randomness of the output.
-  /// The [topP] parameter controls the diversity of the output.
-  /// The [n] parameter specifies the number of completions to generate.
-  /// The [frequencyPenalty] parameter controls the penalty for repeating tokens.
-  /// The [logitBias] parameter is optional and provides bias to the model's output.
-  /// The [logprobs] parameter is optional and specifies whether to include log probabilities.
-  /// The [topLogprobs] parameter is optional and specifies whether to include top log probabilities.
-  /// The [presencePenalty] parameter is optional and controls the penalty for generating new tokens.
-  /// The [responseFormat] parameter is optional and specifies the format of the response.
-  /// The [seed] parameter is optional and provides a seed for random number generation.
-  /// The [stop] parameter is optional and specifies a stopping condition for the generation.
-  /// The [stream] parameter is optional and specifies whether to stream the output.
-  /// The [speed] parameter is optional and controls the speed of the output.
-  ///
-  /// Returns a map representing the request body.
-     // Parametreleri oluştur
+    /// Creates the request body with the specified parameters.
+    ///
+    /// The [model] parameter specifies the model to use.
+    /// The [messages] parameter is optional and is used when the version is 'new'.
+    /// The [prompt] parameter is optional and is used when the version is 'old'.
+    /// The [maxTokens] parameter specifies the maximum number of tokens to generate.
+    /// The [temperature] parameter controls the randomness of the output.
+    /// The [topP] parameter controls the diversity of the output.
+    /// The [n] parameter specifies the number of completions to generate.
+    /// The [frequencyPenalty] parameter controls the penalty for repeating tokens.
+    /// The [logitBias] parameter is optional and provides bias to the model's output.
+    /// The [logprobs] parameter is optional and specifies whether to include log probabilities.
+    /// The [topLogprobs] parameter is optional and specifies whether to include top log probabilities.
+    /// The [presencePenalty] parameter is optional and controls the penalty for generating new tokens.
+    /// The [responseFormat] parameter is optional and specifies the format of the response.
+    /// The [seed] parameter is optional and provides a seed for random number generation.
+    /// The [stop] parameter is optional and specifies a stopping condition for the generation.
+    /// The [stream] parameter is optional and specifies whether to stream the output.
+    /// The [speed] parameter is optional and controls the speed of the output.
+    ///
+    /// Returns a map representing the request body.
     Map<String, dynamic> requestBody = {
       "model": model,
       if (version == 'new') "messages": messages,
       if (version == 'old') "prompt": prompt,
-      "max_tokens": maxTokens,
-      "temperature": temperature,
-      "top_p": topP,
-      "n": n,
       "frequency_penalty": frequencyPenalty,
-      if (logitBias != null && logitBias.isNotEmpty) "logit_bias": logitBias,
-      if (logprobs != null) "logprobs": logprobs,
-      if (topLogprobs != null) "top_logprobs": topLogprobs,
-      if (presencePenalty != null) "presence_penalty": presencePenalty,
-      if (responseFormat != null) "response_format": responseFormat,
-      if (seed != null) "seed": seed,
-      if (stop != null) "stop": stop,
-      if (stream != null) "stream": stream,
-      if (speed != null) "speed": speed,
+      "logit_bias": logitBias,
+      "logprobs": logprobs,
+      "top_logprobs": topLogprobs,
+      "n": n,
+      "presence_penalty": presencePenalty,
+      "response_format": responseFormat,
+      "seed": seed,
+      "stop": stop,
+      "stream": stream,
+      "temperature": temperature,
+      "max_tokens": maxTokens,
+      "top_p": topP,
     };
+
     /// Sends a POST request to the specified API endpoint with the given request body.
     ///
     /// The [requestBody] is encoded as JSON and sent as the request body.
@@ -773,17 +779,28 @@ final encodedBody = utf8.encode(jsonEncode(requestBody));
     /// The [apiKey] is the authorization token used for authentication.
     ///
     /// Returns the response body as a string.
-   
+
     final encodedBody = utf8.encode(jsonEncode(requestBody));
 
-    final request = await HttpClient().postUrl(Uri.parse(apiUrl));
+    // Creates a new HttpClient object
+    var httpClient = HttpClient();
+
+    // Sets the connection timeout in seconds (defaults to 30 seconds)
+    httpClient.connectionTimeout = Duration(seconds: connectionTimeout);
+
+    final request = await httpClient.postUrl(Uri.parse(apiUrl));
     request.headers.set('Content-Type', 'application/json; charset=utf-8');
     request.headers.set('Authorization', 'Bearer $apiKey');
+    if (organization != '') {
+      request.headers.set('OpenAI-Organization', organization);
+    }
     request.add(encodedBody);
 
     final httpResponse = await request.close();
     String responseBody = await utf8.decodeStream(httpResponse);
 
-    return responseBody;
+    OpenAIChatMessage data = await OpenAIChatMessage.fetchData(responseBody);
+
+    return data;
   }
 }

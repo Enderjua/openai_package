@@ -45,7 +45,7 @@ Feel free to use this package in your application, it's always ready to work wit
 - Not all OpenAI APIs sections are included in our package. Soon, all of them will be added
 - Comprehensive examples/snippets provided for nearly all implemented features within the package, located in the `/example` folder.
 
-## 👑 Code Progress (58 %)
+## 👑 Code Progress (65 %)
 
 - [x] [Authentication](#authentication)
 - [x] [Chat (GPT)](#chat)
@@ -61,7 +61,7 @@ Feel free to use this package in your application, it's always ready to work wit
 - [ ] [Fine-tunes](#fine-tunes)
 
 
-## 💫 Testing Progress (40 %)
+## 💫 Testing Progress (45 %)
 
 - [x] [Authentication](#authentication)
 - [x] [Chat (GPT)](#chat)
@@ -94,10 +94,11 @@ The OpenAI API utilizes API keys for authentication. You can obtain your account
 
 ```dart
 import 'package:openai_package/openai_package.dart';
+import 'package:openai_package/src/openai/import/importAi.dart'; //  you must add
 
 // lib/main.dart
 void main() {
-  OpenAI openAi = OpenAI(apiKey: 'your_api_key', model: 'select_your_model');
+  OpenAI.apiKey = 'your-api-key';
   // ..
 }
 ```
@@ -111,11 +112,43 @@ If there is no `model` specified, you will be prompted with a warning message to
 If you have specified a `model` but it is invalid or not supported, you will receive an error message indicating the issue
 
 
-## Warning for Organizations
+## Setting an organization
 
-Unfortunately, the organization creation stage is not available in our package at the moment! We will add it with future updates.
+If you want to configure an `organization` when using the OpenAI API, you can use the following code snippet:
+
+```dart
+// Enter the user's organization ID
+OpenAI.organization = 'org-HZ3hl5Z89fEYVUufQOCzunok';
+```
+
+
+
 
 [Learn More From Here.](https://platform.openai.com/docs/api-reference/authentication)
+
+## Settings a default request timeout
+
+This library utilizes the `http` package for API requests, which comes with a default 30-second timeout. Any request exceeding this duration is canceled and throws an exception. To avoid unexpected cancellations, you can configure a custom default timeout:
+
+```dart
+// Set the default request timeout to 60 seconds (adjust as needed)
+OpenAI.connectionTimeout = Duration(seconds: 60);
+```
+
+With this, your API calls will now wait up to 60 seconds for a response before raising an exception, allowing more breathing room for potentially slower `requests`.
+
+### Key Points:
+- Adjustable timeout: Set the desired response time using OpenAI.requestsTimeout.
+- Duration format: Use the Duration class to specify the timeout in seconds (e.g., Duration(seconds: 45))
+- Improved flexibility: Avoid unwanted cancellations for longer-running requests.
+
+### Caution:
+- Be mindful of exceeding reasonable timeouts, as it can significantly impact performance and responsiveness.
+- Adjust the timeout value based on your specific use case and expected response times.
+
+### Additional Notes:
+- Consider implementing custom timeout logic for individual requests if needed.
+- Monitor and manage performance implications of increased timeout values.
 
 
 ## Chat (GPT)
@@ -128,14 +161,10 @@ Provides a predicted completion for a chat message(s) based on the provided prop
 if your want used to `old` version:
 
 ```dart
-  String result = await openAI.chat(version: 'old', prompt: 'hello world!');
-  print(result);
+  MessageData result = await openAI.chat(version: 'old', prompt: 'hello world!');
+  print(result.message);
 
-  // for message in prompt:
-  FormatMessage formatMessage = FormatMessage(result: result);
-  String response = await formatMessage.getMessage();
-  print(response);
-}
+
 ```
 
 and if your want used `new` version:
@@ -153,13 +182,11 @@ and if your want used `new` version:
   ];
   
 
-  String result = await openAI.chat(messages: message);
-  print(result);
+  MessageData result = await openAI.chat(messages: message);
+  print(result.message);
 
-  // for message in prompt:
-  FormatMessage formatMessage = FormatMessage(result: result);
-  String response = await formatMessage.getMessage();
-  print(response);
+  // if you want printing other information:
+  print(result.model);
 
 ```
 
@@ -189,26 +216,30 @@ The `chat` method is used to interact with the OpenAI API for generating convers
 
 ```dart
 import 'package:openai_package/openai_package.dart';
+import 'package:openai_package/src/openai/import/importAi.dart'; //  you must add
 
 void main() {
   // Initialize OpenAI instance
-  OpenAI openAi = OpenAI(apiKey: 'your_api_key', model: 'gpt-3.5-turbo');
+  OpenAI.apiKey = 'your-api-key';
 
   // Define previous messages
   List<Message> messages = [
     Message(role: 'system', content: 'Hello, how can I assist you today?')
   ];
 
+  OpenAI openAi = OpenAI();
+
   // Generate response
-  Future<String> response = openAi.chat(
+  Future<MessageData> response = openAi.chat(
     messages: messages,
     // for old version prompt: 'I need help with a programming problem.',
     maxTokens: 150,
     temperature: 0.7,
     n: 1,
-    stream: false,
+    stream: false,  
   );
-print(response)
+  print(response.toString());
+}
 ```
 
 
@@ -231,13 +262,15 @@ The `embeddings` method allows you to generate text embeddings using the OpenAI 
 
 ```dart
 import 'package:openai_package/openai_package.dart';
+import 'package:openai_package/src/openai/import/importAi.dart'; //  you must add
 
 void main() async {
   // Initialize OpenAI instance
-  OpenAI openAi = OpenAI(apiKey: 'your_api_key', model: 'text-embedding-3-small');
+    OpenAI.apiKey = 'your-api-key';
+    OpenAI.model = 'your-model';
 
   // Generate embeddings
-  String embeddings = await openAi.embeddings(
+  OpenAIEmbeddings embeddings = await openAi.embeddings(
     input: 'Text input for generating embeddings',
     encodingFormat: 'float',
     dimensions: 512,
@@ -294,7 +327,8 @@ import 'package:openai_package/openai_package.dart';
 
 void main() async {
   // Initialize OpenAI instance
-  OpenAI openAi = OpenAI(apiKey: 'your_api_key', model: 'dall-e-3');
+    OpenAI.apiKey = 'your-api-key';
+    OpenAI.model = 'your-model';
 
   // Generate image
   String generatedImage = await openAi.generateImage(
@@ -345,7 +379,8 @@ import 'package:openai_package/openai_package.dart';
 
 void main() async {
   // Initialize OpenAI instance
-  OpenAI openAi = OpenAI(apiKey: 'your_api_key', model: 'whisper-1' );
+    OpenAI.apiKey = 'your-api-key';
+    OpenAI.model = 'your-model';
 
   // Transcribe audio
   String transcription = await openAi.transcriptions(
@@ -404,7 +439,8 @@ import 'package:openai_package/openai_package.dart';
 
 void main() async {
   // Initialize OpenAI instance
-  OpenAI openAi = OpenAI(apiKey: 'your_api_key', models: 'tts-1');
+    OpenAI.apiKey = 'your-api-key';
+    OpenAI.model = 'your-model';
 
   // Convert text to speech
   String result = await openAi.speech(
@@ -460,55 +496,17 @@ A class that provides methods for formatting transcriptions.
 - `generateRandomString(int length)`: Generates a random string of the specified length.
 - `writeJsonToFile(Map<String, dynamic> jsonData)`: Writes the given JSON data to a file and returns the file name.
 
-## `Message`
+## `MessageData`
 
 Represents a message in a conversation.
 
 ### Constructor
 
-- `Message({String role, String content})`: Constructs a new `Message` with the given `role` and `content`.
+- `MessageDAta({String role, String content})`: Constructs a new `MessageData` with the given `role` and `content`.
 
 ### Methods
 
-- `toJson()`: Converts the `Message` object to a JSON representation.
-
-## `FormatMessage`
-
-A class that represents a formatted message.
-
-### Constructor
-
-- `FormatMessage({String result})`: Constructs a `FormatMessage` object with the given `result`.
-
-### Methods
-
-- `getId()`: Returns the 'id' value from the JSON response.
-- `getObject()`: Returns the 'object' value from the JSON response.
-- `getCreated()`: Returns the 'created' value from the JSON response.
-- `getModel()`: Returns the 'model' value from the JSON response.
-- `getChoices(String result)`: Returns the 'choices' value from the JSON response.
-- `getMessage()`: Returns the 'content' value of the first choice's 'message' from the JSON response.
-- `getUsage()`: Returns the 'usage' value from the JSON response.
-- `getSystemFingerprint()`: Returns the 'system_fingerprint' value from the JSON response.
-
-## `FormatEmbeddings`
-
-A class that represents the formatted embeddings response.
-
-### Constructor
-
-- `FormatEmbeddings({String result})`: Constructs a `FormatEmbeddings` instance with the given `result`.
-
-### Methods
-
-- `getIndex()`: Returns the index value from the JSON response.
-- `getObject()`: Returns the object value from the JSON response.
-- `getEmbedding()`: Returns the embedding value from the JSON response.
-- `getModel()`: Returns the model value from the JSON response.
-- `getPromptTokens()`: Returns the number of prompt tokens from the JSON response.
-- `getTotalTokens()`: Returns the total number of tokens from the JSON response.
-
-
+- `toJson()`: Converts the `MessageData` object to a JSON representation.
 
 ## Want to Contribute?
 

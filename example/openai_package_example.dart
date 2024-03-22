@@ -1,21 +1,28 @@
 // ignore_for_file: unused_local_variable
 
 import 'package:openai_package/openai_package.dart';
-import 'package:openai_package/src/openai/import/import.dart';
+import 'package:openai_package/src/openai/import/importAi.dart'; //  you must add
 
-void main() async {
-  // Create an instance of the OpenAI client
-  OpenAI client = OpenAI(apiKey: 'YOUR_API_KEY', model: 'gpt-3.5-turbo');
+void main() {
+  // Initialize OpenAI instance
+  OpenAI.apiKey = 'your-api-key';
 
-  List<Message> message = [
-    Message(role: '', content: ''),
+  // Define previous messages
+  List<Message> messages = [
+    Message(role: 'system', content: 'Hello, how can I assist you today?')
   ];
 
-  // Call the API to generate text
-  String prompt = 'Once upon a time';
-  int maxTokens = 100;
-  String generatedText = await client.chat(messages: message);
+  OpenAI openAi = OpenAI();
 
-  // Print the generated text
-  print(generatedText);
+  // Generate response
+  Future<OpenAIChatMessage> response = openAi.chat(
+    messages: messages,
+    // for old version prompt: 'I need help with a programming problem.',
+    maxTokens: 150,
+    temperature: 0.7,
+    n: 1,
+    stream: false,
+  );
+print(response.toString());
+
 }

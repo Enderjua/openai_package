@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import '../../import/import.dart';
 
 
@@ -9,60 +11,64 @@ class FormatMessage {
     required this.result,
   });
 
-  /// Returns the 'id' value from the JSON response.
-  /// If the 'id' value is not found, it returns a warning message.
-  String getId() {
-    final jsonResponse = jsonDecode(result);
-    return jsonResponse['id'] ?? "WARNING: Invalid 'id' JSON address";
+  // JSON verisini işleyen yardımcı bir fonksiyon
+  Map<String, dynamic> decodeResult() {
+    return jsonDecode(result);
   }
 
-  /// Returns the 'object' value from the JSON response.
-  /// If the 'object' value is not found, it returns a warning message.
-  String getObject() {
-    final jsonResponse = jsonDecode(result);
-    return jsonResponse['object'] ?? "WARNING: Invalid 'object' JSON address";
-  }
-
-  /// Returns the 'created' value from the JSON response.
-  /// If the 'created' value is not found, it returns a warning message.
-  int getCreated() {
-    final jsonResponse = jsonDecode(result);
-    return jsonResponse['created'] ?? "WARNING: Invalid 'created' JSON address";
-  }
-
-  /// Returns the 'model' value from the JSON response.
-  /// If the 'model' value is not found, it returns a warning message.
-  String getModel() {
-    final jsonResponse = jsonDecode(result);
-    return jsonResponse['model'] ?? "WARNING: Invalid 'model' JSON address";
-  }
-
-  /// Returns the 'choices' value from the JSON response.
-  /// If the 'choices' value is not found, it returns a warning message.
-  List<dynamic> getChoices(String result) {
-    final jsonResponse = jsonDecode(result);
-    return jsonResponse['choices'] ?? "WARNING: Invalid 'choices' JSON address";
-  }
-
-  /// Returns the 'content' value of the first choice's 'message' from the JSON response.
-  /// If the 'message' or 'content' value is not found, it returns a warning message.
-  String getMessage() {
-    return getChoices(result)[0]['message']['content'] ??
-        "WARNING: Invalid 'message' JSON address";
-  }
-
-  /// Returns the 'usage' value from the JSON response.
-  /// If the 'usage' value is not found, it returns a warning message.
-  Map<String, dynamic> getUsage() {
-    final jsonResponse = jsonDecode(result);
-    return jsonResponse['usage'] ?? "WARNING: Invalid 'usage' JSON address";
-  }
-
-  /// Returns the 'system_fingerprint' value from the JSON response.
-  /// If the 'system_fingerprint' value is not found, it returns a warning message.
-  dynamic getSystemFingerprint() {
-    final jsonResponse = jsonDecode(result);
-    return jsonResponse['system_fingerprint'] ??
-        "WARNING: Invalid 'system_fingerprint' JSON address";
+  // Elde edilen verileri içeren nesneyi döndüren fonksiyon
+  OpenAIChatMessage extractData() {
+    final jsonResponse = decodeResult();
+    return OpenAIChatMessage(
+      id: jsonResponse['id'] ?? "WARNING: Invalid 'id' JSON address",
+      object: jsonResponse['object'] ?? "WARNING: Invalid 'object' JSON address",
+      created: jsonResponse['created'] ?? "WARNING: Invalid 'created' JSON address",
+      model: jsonResponse['model'] ?? "WARNING: Invalid 'model' JSON address",
+      choices: jsonResponse['choices'] ?? "WARNING: Invalid 'choices' JSON address",
+      message: jsonResponse['choices'][0]['message']['content' ] ?? "WARNING: Invalid 'message' JSON address",
+      usage: jsonResponse['usage'] ?? "WARNING: Invalid 'usage' JSON address",
+      systemFingerprint: jsonResponse['system_fingerprint'] ?? "WARNING: Invalid 'system_fingerprint' JSON address",
+    );
   }
 }
+
+/// Verileri içeren nesne
+class OpenAIChatMessage {
+  final dynamic id;
+  final dynamic object;
+  final dynamic created;
+  final dynamic model;
+  final dynamic choices;
+  final dynamic message;
+  final dynamic usage;
+  final dynamic systemFingerprint;
+
+  OpenAIChatMessage({
+    required this.id,
+    required this.object,
+    required this.created,
+    required this.model,
+    required this.choices,
+    required this.message,
+    required this.usage,
+    required this.systemFingerprint,
+  });
+
+  @override
+  String toString() {
+    return '''
+    ID: $id
+    Object: $object
+    Created: $created
+    Model: $model
+    Choices: $choices
+    Usage: $usage
+    System Fingerprint: $systemFingerprint
+    ''';
+  }
+
+  static Future<OpenAIChatMessage> fetchData(String result) async {
+  return FormatMessage(result: result).extractData();
+}
+}
+
